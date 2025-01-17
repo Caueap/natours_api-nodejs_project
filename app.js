@@ -1,17 +1,33 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const app = express();
 
+// Middlewares
+app.use(morgan('dev'));
 app.use(express.json());
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
+const users = JSON.parse(
+  fs.readFileSync(`${__dirname}/dev-data/data/users.json`)
+);
+
+// Route Handlers
+
+// Tours
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours: tours,
@@ -88,6 +104,90 @@ const deleteTour = (req, res) => {
   }
 };
 
+// Users
+const getAllUsers = (req, res) => {
+  res.status(200).json({
+    status: 'Success',
+    results: users.length,
+    data: {
+      users: users,
+    },
+  });
+};
+
+const getUser = (req, res) => {
+  const id = req.params._id;
+  const user = users.find((el) => el.id === id);
+
+  if (!user) {
+    res.status(404).json({
+      status: 'Failure',
+      message: 'User does not exist',
+    });
+  } else {
+    res.status(200).json({
+      status: 'Success',
+
+      data: {
+        user: user,
+      },
+    });
+  }
+};
+
+const createUser = (req, res) => {
+  const newId = '5c8a' + Math.random();
+  const newUser = Object.assign({ id: newId }, req.body);
+
+  users.push(newUser);
+
+  fs.writeFile(
+    `${__dirname}/dev-data/data/users.json`,
+    JSON.stringify(users),
+    (err) => {
+      res.status(201).json({
+        satus: 'success',
+        data: {
+          user: newUser,
+        },
+      });
+    }
+  );
+};
+
+const updateUser = (req, res) => {
+  if (parseInt(req.params.id) > users.length) {
+    res.status(404).json({
+      status: 'Failure',
+      message: 'Invalid ID',
+    });
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user: '<Updated user goes here>',
+      },
+    });
+  }
+};
+
+const deleteUser = (req, res) => {
+  if (parseInt(req.params.id) > users.length) {
+    res.status(404).json({
+      status: 'Failure',
+      message: 'Invalid ID',
+    });
+  } else {
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  }
+};
+
+// Routes
+
+// Tours
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
 app
@@ -96,6 +196,16 @@ app
   .patch(updateTour)
   .delete(deleteTour);
 
+// Users
+app.route('/api/v1/users').get(getAllUsers).post(createUser);
+
+app
+  .route('/api/v1/users/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
+
+// Server
 const port = 3000;
 app.listen(port, () => {
   console.log(`App running on port ${port}`);

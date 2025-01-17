@@ -188,22 +188,57 @@ const deleteUser = (req, res) => {
 // Routes
 
 // Tours
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+// Old route implementation
+
+// app.route('/api/v1/tours').get(getAllTours).post(createTour);
+
+// app
+//   .route('/api/v1/tours/:id')
+//   .get(getTour)
+//   .patch(updateTour)
+//   .delete(deleteTour);
+
+// New route implementation
+
+const tourRouter = express.Router();
+tourRouter.route('/').get(getAllTours).post(createTour);
+
+tourRouter
+.route('/:id')
+.get(getTour)
+.patch(updateTour)
+.delete(deleteTour);
+
+app.use('/api/v1/tours', tourRouter);
+///////////////////////////////////////////////////////////////////
+
 
 // Users
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
 
-app
-  .route('/api/v1/users/:id')
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+// Old route implementation
+
+// app.route('/api/v1/users').get(getAllUsers).post(createUser);
+
+// app
+//   .route('/api/v1/users/:id')
+//   .get(getUser)
+//   .patch(updateUser)
+//   .delete(deleteUser);
+
+// New route implementation
+
+const userRouter = express.Router();
+userRouter.route('/').get(getAllUsers).post(createUser);
+
+userRouter
+.route('/:id')
+.get(getUser)
+.patch(updateUser)
+.delete(deleteUser);
+
+app.use('/api/v1/users', userRouter)
+/////////////////////////////////////////////////////////////////////  
 
 // Server
 const port = 3000;

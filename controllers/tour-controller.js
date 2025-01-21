@@ -1,8 +1,41 @@
 const Tour = require('../models/tour-model');
 
-exports.getAllTours = (req, res) => {};
+exports.getAllTours = async (req, res) => {
+  try {
+    const tours = await Tour.find();
 
-exports.getTour = (req, res) => {};
+    res.status(200).json({
+      message: 'success',
+      results: tours.lentgh,
+      data: {
+        tours: tours,
+      },
+    });
+  } catch (e) {
+    res.status(404).json({
+      status: 'failure',
+      message: e,
+    });
+  }
+};
+
+exports.getTour = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour: tour,
+      },
+    });
+  } catch (e) {
+    res.status(404).json({
+      status: 'failure',
+      message: e,
+    });
+  }
+};
 
 exports.createTour = async (req, res) => {
   try {

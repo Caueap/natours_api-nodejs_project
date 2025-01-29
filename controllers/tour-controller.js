@@ -1,3 +1,4 @@
+// const mongoose = require('mongoose');
 const Tour = require('../models/tour-model');
 const ApiFeatures = require('../utils/api-features');
 const AppError = require('../utils/app-error');
@@ -77,11 +78,15 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
+  // if (!mongoose.isValidObjectId(req.params.id)) {
+  //   return next(new AppError(`Invalid ID format: ${req.params.id}`, 400));
+  // }
+
   const tour = await Tour.findById(req.params.id);
+  // console.log(`tour at findById moment: ${tour}`);
 
   if (!tour) {
-    const err = new AppError('No tour found with that ID', 404);
-    return next(err);
+    return next(new AppError('No tour found with that ID', 404));
   }
 
   res.status(200).json({

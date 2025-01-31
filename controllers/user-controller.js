@@ -1,86 +1,22 @@
-const fs = require('fs');
+const User = require('../models/user-model');
+const catchAsync = require('../utils/catch-async');
 
-const users = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/users.json`),
-);
+exports.getAllUsers = catchAsync(async (req, res) => {
+  const users = await User.find();
 
-exports.getAllUsers = (req, res) => {
   res.status(200).json({
-    status: 'Success',
+    message: 'success',
     results: users.length,
     data: {
       users: users,
     },
   });
-};
+});
 
-exports.getUser = (req, res) => {
-  // eslint-disable-next-line prefer-destructuring
-  const id = req.params.id;
-  const user = users.find((el) => el.id === id);
+exports.getUser = (req, res) => {};
 
-  if (!user) {
-    res.status(404).json({
-      status: 'Failure',
-      message: 'User does not exist',
-    });
-  } else {
-    res.status(200).json({
-      status: 'Success',
+exports.createUser = (req, res) => {};
 
-      data: {
-        user: user,
-      },
-    });
-  }
-};
+exports.updateUser = (req, res) => {};
 
-exports.createUser = (req, res) => {
-  const newId = '5c8a' + Math.random();
-  const newUser = Object.assign({ id: newId }, req.body);
-
-  users.push(newUser);
-
-  fs.writeFile(
-    `${__dirname}/dev-data/data/users.json`,
-    JSON.stringify(users),
-    () => {
-      res.status(201).json({
-        satus: 'success',
-        data: {
-          user: newUser,
-        },
-      });
-    },
-  );
-};
-
-exports.updateUser = (req, res) => {
-  if (parseInt(req.params.id) > users.length) {
-    res.status(404).json({
-      status: 'Failure',
-      message: 'Invalid ID',
-    });
-  } else {
-    res.status(200).json({
-      status: 'success',
-      data: {
-        user: '<Updated user goes here>',
-      },
-    });
-  }
-};
-
-exports.deleteUser = (req, res) => {
-  if (parseInt(req.params.id) > users.length) {
-    res.status(404).json({
-      status: 'Failure',
-      message: 'Invalid ID',
-    });
-  } else {
-    res.status(204).json({
-      status: 'success',
-      data: null,
-    });
-  }
-};
+exports.deleteUser = (req, res) => {};

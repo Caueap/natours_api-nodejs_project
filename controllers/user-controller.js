@@ -15,7 +15,8 @@ exports.getAllUsers = (req, res) => {
 };
 
 exports.getUser = (req, res) => {
-  const id = req.params._id;
+  // eslint-disable-next-line prefer-destructuring
+  const id = req.params.id;
   const user = users.find((el) => el.id === id);
 
   if (!user) {

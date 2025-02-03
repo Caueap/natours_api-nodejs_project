@@ -20,6 +20,12 @@ const handleValidationErrorDb = (err) => {
   return new AppError(message, 400);
 };
 
+const handleJwtError = () =>
+  new AppError('Invalid token. Please login again', 401);
+
+const handleJwtExpiredError = () =>
+  new AppError('Your token has expired. Please log in again', 401);
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -67,12 +73,14 @@ module.exports = (err, req, res, next) => {
     // This could be done using mongoose.isValidObjectId() in
     // the getTour method. It would already take care of the cast
     // error. For this approach to work, in the copy of the object
-    // above the message should also be passed, alongside the name
+    // above the message should also be passed, alongside with the name
     if (error.name === 'CastError') error = handleCastErrorDb(error);
 
     if (error.code === 11000) error = handleDuplicateFieldsDb(error);
     if (error.name === 'ValidationError')
       error = handleValidationErrorDb(error);
+    if (error.name === 'JsonWebTokenError') error = handleJwtError();
+    if (error.name === 'TokenExpiredError') error = handleJwtExpiredError();
     sendErrorProd(error, res);
   }
 };

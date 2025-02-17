@@ -1,6 +1,7 @@
 const User = require('../models/user-model');
 const catchAsync = require('../utils/catch-async');
 const AppError = require('../utils/app-error');
+const factory = require('./handler-factory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -61,6 +62,9 @@ exports.deleteCurrentUser = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+// Will only be performed by admin
+exports.deleteUser = factory.deleteOne(User);
 
 exports.getUser = (req, res) => {};
 

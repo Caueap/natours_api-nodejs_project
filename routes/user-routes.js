@@ -10,6 +10,13 @@ router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
+router.get(
+  '/getCurrentUser',
+  authController.protect,
+  userController.getCurrentUser,
+  userController.getUser,
+);
+
 router.patch(
   '/updateCurrentUser',
   authController.protect,
@@ -28,10 +35,7 @@ router.delete(
   userController.deleteCurrentUser,
 );
 
-router
-  .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+router.route('/').get(userController.getAllUsers);
 
 router
   .route('/:id')

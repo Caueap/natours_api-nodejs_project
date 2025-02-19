@@ -64,10 +64,9 @@ exports.deleteCurrentUser = catchAsync(async (req, res, next) => {
 });
 
 // Will only be performed by admin
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
 
 exports.getUser = (req, res) => {};
 
 exports.createUser = (req, res) => {};
-
-exports.updateUser = (req, res) => {};

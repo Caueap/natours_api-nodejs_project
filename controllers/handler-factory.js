@@ -15,16 +15,34 @@ exports.deleteOne = (Model) =>
     });
   });
 
-// exports.deleteTour = catchAsync(async (req, res, next) => {
-//     const tour = await Tour.findByIdAndDelete(req.params.id);
+exports.updateOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
-//     if (!tour) {
-//       const err = new AppError('No tour found with that ID', 404);
-//       return next(err);
-//     }
+    if (!doc) {
+      const err = new AppError('No document found with that ID', 404);
+      return next(err);
+    }
 
-//     res.status(204).json({
-//       status: 'success',
-//       data: null,
-//     });
-//   });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        doc,
+      },
+    });
+  });
+
+exports.createOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.create(req.body);
+
+    res.status(201).json({
+      status: 'sucsess',
+      data: {
+        doc,
+      },
+    });
+  });
